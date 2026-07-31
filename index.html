@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ohjausagentti — hallintapaneeli</title>
+<style>
+:root { color-scheme: light; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: #1a2233; background: #eef1f6; line-height: 1.5;
+}
+.wrap { max-width: 960px; margin: 0 auto; padding: 26px 20px 70px; }
+h1 { font-size: 25px; margin: 0 0 3px; }
+.sub { color: #5a667a; font-size: 14px; margin: 0 0 22px; }
+.card { background: #fff; border: 1px solid #e4e9f1; border-radius: 14px; padding: 18px 20px; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(20,30,50,.04); }
+.card h2 { font-size: 15px; margin: 0 0 12px; letter-spacing:.02em; text-transform: uppercase; color:#40495a; }
+.card h2 .em { text-transform:none; letter-spacing:0; color:#8592a8; font-weight:400; font-size:13px; margin-left:6px; }
+
+/* Quick links */
+.links { display: flex; flex-wrap: wrap; gap: 10px; }
+.linkbtn { display:inline-flex; align-items:center; gap:8px; text-decoration:none; background:#f4f6fb; border:1px solid #dfe5ee; color:#1e3a8a; border-radius:10px; padding:9px 14px; font-size:14px; font-weight:600; }
+.linkbtn:hover { background:#e8edf7; }
+.linkbtn .dot { width:8px; height:8px; border-radius:50%; background:#1e3a8a; }
+
+/* Commands */
+.cmd { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding:12px 0; border-top:1px solid #eef1f6; }
+.cmd:first-of-type { border-top:none; }
+.cmd-txt strong { display:block; font-size:14px; margin-bottom:2px; }
+.cmd-txt span { font-size:13px; color:#5a667a; }
+.copybtn { flex:none; background:#1e3a8a; color:#fff; border:none; border-radius:8px; padding:7px 13px; font-size:13px; font-weight:600; cursor:pointer; white-space:nowrap; }
+.copybtn:hover { background:#172d6b; }
+.copybtn.done { background:#1c7a45; }
+.cmd-hint { font-size:12px; color:#8592a8; margin-top:10px; }
+
+/* Sources */
+.srclist { list-style:none; margin:0; padding:0; }
+.srclist li { display:flex; align-items:center; gap:10px; padding:8px 0; border-top:1px solid #eef1f6; font-size:14px; }
+.srclist li:first-child { border-top:none; }
+.srclist a { color:#1e5fd0; text-decoration:none; word-break:break-all; }
+.srclist a:hover { text-decoration:underline; }
+.srclist .name { flex:1; }
+.srclist .kw { font-size:12px; color:#8592a8; }
+.srclist button { background:none; border:none; color:#b7c0d0; cursor:pointer; font-size:13px; }
+.srclist button:hover { color:#d13b3b; }
+.addrow { display:flex; gap:8px; margin-top:12px; flex-wrap:wrap; }
+.addrow input { flex:1; min-width:140px; border:1px solid #d3dae6; border-radius:8px; padding:8px 10px; font-size:14px; font-family:inherit; }
+.addrow button { background:#1e3a8a; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:14px; font-weight:600; cursor:pointer; }
+
+/* Timeline */
+.toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px; }
+.filters { display:flex; gap:6px; flex-wrap:wrap; }
+.chip { border:1px solid #d3dae6; background:#fff; color:#40495a; border-radius:999px; padding:5px 12px; font-size:13px; cursor:pointer; }
+.chip.active { background:#1e3a8a; border-color:#1e3a8a; color:#fff; }
+.btn-add { margin-left:auto; background:#1e3a8a; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-size:14px; font-weight:600; cursor:pointer; }
+.btn-add:hover { background:#172d6b; }
+.timeline { position:relative; padding-left:20px; }
+.timeline::before { content:""; position:absolute; left:6px; top:6px; bottom:6px; width:2px; background:#dfe5ee; }
+.month-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#8592a8; margin:16px 0 8px -6px; padding-left:18px; }
+.event { position:relative; background:#fbfcfe; border:1px solid #e4e9f1; border-radius:12px; padding:13px 15px; margin-bottom:11px; }
+.event::before { content:""; position:absolute; left:-18px; top:19px; width:11px; height:11px; border-radius:50%; background:#1e3a8a; border:2px solid #fff; box-shadow:0 0 0 2px #dfe5ee; }
+.event.past::before { background:#b7c0d0; }
+.event.past { opacity:.7; }
+.ev-top { display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+.ev-date { font-size:13px; font-weight:700; color:#1e3a8a; white-space:nowrap; }
+.ev-title { font-size:15px; font-weight:600; margin:3px 0 2px; }
+.ev-meta { font-size:13px; color:#5a667a; }
+.ev-desc { font-size:13px; color:#34405a; margin:7px 0 0; }
+.badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+.badge.vahvistettu { background:#e3f4ea; color:#1c7a45; }
+.badge.arvio { background:#fef3e0; color:#a6641a; }
+.badge.seurataan { background:#eef1f6; color:#5a667a; }
+.ev-links { margin-top:8px; display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+.ev-links a { font-size:13px; color:#1e5fd0; text-decoration:none; }
+.ev-links a:hover { text-decoration:underline; }
+.ev-actions { margin-left:auto; display:flex; gap:10px; }
+.ev-actions button { background:none; border:none; color:#8592a8; font-size:12px; cursor:pointer; padding:0; }
+.ev-actions button:hover { color:#1e5fd0; }
+.empty { color:#8592a8; font-size:14px; padding:16px 0; text-align:center; }
+.status-bar { display:flex; align-items:center; gap:8px; font-size:12px; color:#8592a8; margin-bottom:8px; }
+.status-bar .dotc { width:8px; height:8px; border-radius:50%; background:#1c7a45; flex:none; }
+.status-bar.stale .dotc { background:#a6641a; }
+.status-bar.err .dotc { background:#d13b3b; }
+.reloadbtn { background:none; border:1px solid #d3dae6; border-radius:8px; color:#40495a; font-size:12px; padding:3px 10px; cursor:pointer; }
+.reloadbtn:hover { background:#f4f6fb; }
+
+/* Modal */
+.overlay { position:fixed; inset:0; background:rgba(20,30,50,.4); display:none; align-items:center; justify-content:center; padding:16px; z-index:50; }
+.overlay.open { display:flex; }
+.modal { background:#fff; border-radius:14px; width:100%; max-width:440px; padding:20px; max-height:90vh; overflow:auto; }
+.modal h3 { margin:0 0 4px; font-size:17px; }
+.modal .modal-hint { font-size:12px; color:#8592a8; margin:0 0 14px; }
+.field { margin-bottom:12px; }
+.field label { display:block; font-size:13px; font-weight:600; margin-bottom:4px; color:#40495a; }
+.field input, .field textarea, .field select { width:100%; border:1px solid #d3dae6; border-radius:8px; padding:8px 10px; font-size:14px; font-family:inherit; color:#1a2233; }
+.field textarea { min-height:56px; resize:vertical; }
+.row { display:flex; gap:10px; }
+.row .field { flex:1; }
+.modal-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:6px; }
+.modal-actions button { border-radius:8px; padding:8px 16px; font-size:14px; cursor:pointer; font-weight:600; }
+.btn-cancel { background:#eef1f6; border:none; color:#40495a; }
+.btn-save { background:#1e3a8a; border:none; color:#fff; }
+.foot { text-align:center; color:#a3adbf; font-size:12px; margin-top:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Ohjausagentti — hallintapaneeli</h1>
+  <p class="sub">Opinto-ohjaajan tapahtuma- ja tehtäväkeskus. Aikajana peilaa Google-kalenteria (admindigiopo).</p>
+
+  <!-- QUICK LINKS -->
+  <div class="card">
+    <h2>Pikalinkit</h2>
+    <div class="links">
+      <a class="linkbtn" href="https://calendar.google.com/" target="_blank" rel="noopener"><span class="dot"></span>Google-kalenteri</a>
+      <a class="linkbtn" href="https://opintopolku.fi/" target="_blank" rel="noopener"><span class="dot"></span>Opintopolku</a>
+      <a class="linkbtn" href="https://www.oph.fi/fi" target="_blank" rel="noopener"><span class="dot"></span>Opetushallitus</a>
+      <a class="linkbtn" href="https://www.skillsfinland.fi/ajankohtaista/tapahtumat" target="_blank" rel="noopener"><span class="dot"></span>Skills Finland – tapahtumat</a>
+      <a class="linkbtn" href="https://mail.google.com/" target="_blank" rel="noopener"><span class="dot"></span>Gmail</a>
+      <a class="linkbtn" href="https://claude.ai/" target="_blank" rel="noopener"><span class="dot"></span>Claude / Cowork</a>
+    </div>
+  </div>
+
+  <!-- COMMANDS -->
+  <div class="card">
+    <h2>Valmiit komennot agentille <span class="em">kopioi ja liitä Cowork-agentille</span></h2>
+    <div id="cmds"></div>
+    <p class="cmd-hint">Kopioi komento, avaa Cowork-agentti (pikalinkki yllä) ja liitä teksti viestikenttään. Agentti hoitaa haun, kalenterin ja sähköpostiluonnokset.</p>
+  </div>
+
+  <!-- SOURCES -->
+  <div class="card">
+    <h2>Viikoittain seurattavat lähteet</h2>
+    <ul class="srclist" id="srclist"></ul>
+    <div class="addrow">
+      <input type="text" id="src-name" placeholder="Lähteen nimi (esim. Oman kunnan opot ry)">
+      <input type="url" id="src-url" placeholder="URL (valinnainen)">
+      <button id="src-add">Lisää lähde</button>
+    </div>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="card">
+    <div class="status-bar" id="statusBar"><span class="dotc"></span><span id="statusText">Ladataan…</span><button class="reloadbtn" id="reloadBtn" style="margin-left:auto">Päivitä</button></div>
+    <div class="toolbar">
+      <div class="filters">
+        <button class="chip active" data-filter="tulevat">Tulevat</button>
+        <button class="chip" data-filter="kaikki">Kaikki</button>
+        <button class="chip" data-filter="vahvistettu">Vahvistetut</button>
+        <button class="chip" data-filter="arvio">Arviot</button>
+      </div>
+      <button class="btn-add" id="addBtn">+ Lisää tapahtuma</button>
+    </div>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <p class="foot">Ohjausagentti-paneeli · aikajana = Google-kalenteri, jonka agentti pitää ajan tasalla</p>
+</div>
+
+<!-- Event / command modal -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="modalTitle">Lisää tapahtuma</h3>
+    <p class="modal-hint" id="modalHint">Tämä ei kirjoita suoraan kalenteriin. Täytä tiedot ja kopioi valmis komento agentille — agentti lisää tapahtuman Google-kalenteriin, ja se ilmestyy tähän aikajanaan seuraavassa päivityksessä.</p>
+    <div class="field"><label>Otsikko</label><input type="text" id="f-title" placeholder="esim. Vanhempainilta 9. luokat"></div>
+    <div class="row">
+      <div class="field"><label>Alkupäivä</label><input type="date" id="f-date"></div>
+      <div class="field"><label>Loppupäivä (valinn.)</label><input type="date" id="f-enddate"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Paikka</label><input type="text" id="f-location" placeholder="esim. Helsinki, Messukeskus"></div>
+      <div class="field"><label>Tila</label>
+        <select id="f-status">
+          <option value="vahvistettu">Vahvistettu</option>
+          <option value="arvio">Arvio</option>
+          <option value="seurataan">Seurataan</option>
+        </select>
+      </div>
+    </div>
+    <div class="field"><label>Kuvaus</label><textarea id="f-desc" placeholder="Lyhyt kuvaus tai muistiinpano"></textarea></div>
+    <div class="field"><label>Lähde-URL (valinn.)</label><input type="url" id="f-source" placeholder="https://..."></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" id="cancelBtn">Peruuta</button>
+      <button class="btn-save" id="saveBtn">Kopioi komento agentille</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- Commands ---------- */
+const COMMANDS = [
+  { t: "Hae uudet ohjaustapahtumat", d: "Etsii netistä ja lähteistäsi uudet tapahtumat ja lisää vahvistetut kalenteriin.",
+    p: "Hae uusimmat yläkoulun (7.-9. lk) opinto-ohjaukseen liittyvät tapahtumat netistä ja seuraamistani lähteistä. Vältä duplikaatit tarkistamalla admindigiopo-kalenteri, lisää uudet vahvistetut tapahtumat kalenteriin (koko päivän merkintä, muistutus viikko + 1 vrk ennen) ja raportoi minulle lyhyesti mitä löytyi." },
+  { t: "Luonnostele sähköpostivastaus", d: "Hakee Gmailista vastausta odottavan viestin ja tekee luonnoksen.",
+    p: "Hae Gmailista viimeisin vastausta odottava viesti, tiivistä se minulle ja luonnostele siihen vastaus tarkistettavakseni. Älä lähetä mitään ennen kuin hyväksyn." },
+  { t: "Näytä tulevat tapahtumat", d: "Listaa kalenterin tulevat ohjaustapahtumat aikajärjestyksessä.",
+    p: "Näytä admindigiopo-kalenterin tulevat ohjaustapahtumat aikajärjestyksessä, päivämäärineen ja paikkoineen." },
+  { t: "Päivitä paneelin aikajana", d: "Pakottaa agentin päivittämään tapahtumat.json kalenterista heti.",
+    p: "Päivitä ohjausagentti-paneelin aikajana: hae admindigiopo-kalenterin tapahtumat ja kirjoita ne tapahtumat.json-tiedostoon GitHub-repoon (sovittu synkkatehtävä)." }
+];
+function renderCmds() {
+  const box = document.getElementById("cmds");
+  box.innerHTML = "";
+  COMMANDS.forEach((c, i) => {
+    const row = document.createElement("div");
+    row.className = "cmd";
+    row.innerHTML = `<div class="cmd-txt"><strong></strong><span></span></div><button class="copybtn" data-i="${i}">Kopioi</button>`;
+    row.querySelector("strong").textContent = c.t;
+    row.querySelector("span").textContent = c.d;
+    box.appendChild(row);
+  });
+}
+function copyText(text, btn){
+  const done = () => { if(!btn) return; const o=btn.textContent; btn.textContent="Kopioitu ✓"; btn.classList.add("done"); setTimeout(()=>{btn.textContent=o; btn.classList.remove("done");},1600); };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(done).catch(()=>window.prompt("Kopioi teksti käsin:", text));
+  } else { window.prompt("Kopioi teksti käsin:", text); }
+}
+document.getElementById("cmds").addEventListener("click", (e) => {
+  const b = e.target.closest(".copybtn"); if (!b) return;
+  copyText(COMMANDS[+b.dataset.i].p, b);
+});
+
+/* ---------- Sources (paikallinen muistilista agentille) ---------- */
+const SRC_KEY = "oa_sources_v1";
+const SRC_SEED = [
+  { name: "Skills Finland – tapahtumat", url: "https://www.skillsfinland.fi/ajankohtaista/tapahtumat", kw: "" },
+  { name: "Opintopolku – tärkeät päivämäärät", url: "https://opintopolku.fi/konfo/fi/sivu/tarkeita-paivamaaria-perusopetuksen-jalkeisen-koulutuksen-yhteishaussa", kw: "" },
+  { name: "Opetushallitus – uutiset", url: "https://www.oph.fi/fi/uutiset", kw: "yhteishaku" }
+];
+function loadSrc(){ try { const r = localStorage.getItem(SRC_KEY); if (r) return JSON.parse(r); } catch(e){} return SRC_SEED.slice(); }
+function saveSrc(s){ try { localStorage.setItem(SRC_KEY, JSON.stringify(s)); } catch(e){} }
+let sources = loadSrc();
+function renderSrc(){
+  const ul = document.getElementById("srclist"); ul.innerHTML = "";
+  if (!sources.length){ ul.innerHTML = '<li style="color:#8592a8">Ei lähteitä vielä. Lisää alta.</li>'; return; }
+  sources.forEach((s, i) => {
+    const li = document.createElement("li");
+    const name = document.createElement("span"); name.className="name";
+    if (s.url){ const a=document.createElement("a"); a.href=s.url; a.target="_blank"; a.rel="noopener"; a.textContent=s.name||s.url; name.appendChild(a); }
+    else name.textContent = s.name;
+    li.appendChild(name);
+    if (s.kw){ const k=document.createElement("span"); k.className="kw"; k.textContent="hakusana: "+s.kw; li.appendChild(k); }
+    const del=document.createElement("button"); del.textContent="Poista"; del.onclick=()=>{ sources.splice(i,1); saveSrc(sources); renderSrc(); };
+    li.appendChild(del); ul.appendChild(li);
+  });
+}
+document.getElementById("src-add").addEventListener("click", () => {
+  const name = document.getElementById("src-name").value.trim();
+  const url = document.getElementById("src-url").value.trim();
+  if (!name && !url){ alert("Anna vähintään nimi tai URL."); return; }
+  sources.push({ name: name || url, url, kw: "" });
+  saveSrc(sources);
+  document.getElementById("src-name").value = ""; document.getElementById("src-url").value = "";
+  renderSrc();
+});
+
+/* ---------- Timeline (Google-kalenteri = totuus, luetaan JSONista) ---------- */
+const DATA_URL = "./tapahtumat.json";
+const CACHE_KEY = "oa_events_cache_v2", FILTER_KEY = "oa_filter";
+const MONTHS = ["tammikuuta","helmikuuta","maaliskuuta","huhtikuuta","toukokuuta","kesäkuuta","heinäkuuta","elokuuta","syyskuuta","lokakuuta","marraskuuta","joulukuuta"];
+const MONTHS_CAP = ["Tammikuu","Helmikuu","Maaliskuu","Huhtikuu","Toukokuu","Kesäkuu","Heinäkuu","Elokuu","Syyskuu","Lokakuu","Marraskuu","Joulukuu"];
+let events = [];
+let generatedAt = null;
+let filter = localStorage.getItem(FILTER_KEY) || "tulevat";
+function parseDate(s){ if(!s) return null; const d=new Date(s+"T00:00:00"); return isNaN(d)?null:d; }
+function todayStr(){ const n=new Date(); return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0"); }
+function fmtRange(ev){
+  const d=parseDate(ev.date); if(!d) return "";
+  const day=d.getDate(), mon=MONTHS[d.getMonth()], yr=d.getFullYear();
+  if(ev.endDate){ const e=parseDate(ev.endDate);
+    if(e && e.getMonth()===d.getMonth() && e.getFullYear()===yr) return `${day}.-${e.getDate()}. ${mon} ${yr}`;
+    if(e) return `${day}. ${mon} - ${e.getDate()}. ${MONTHS[e.getMonth()]} ${e.getFullYear()}`;
+  }
+  return `${day}. ${mon} ${yr}`;
+}
+function statusLabel(s){ return s==="vahvistettu"?"Vahvistettu":s==="arvio"?"Arvio":"Seurataan"; }
+function setStatus(state, text){
+  const bar=document.getElementById("statusBar"); bar.className="status-bar"+(state==="stale"?" stale":state==="err"?" err":"");
+  document.getElementById("statusText").textContent=text;
+}
+function fmtWhen(iso){
+  const d = iso ? new Date(iso) : null;
+  if(!d || isNaN(d)) return "";
+  return d.toLocaleDateString("fi-FI",{day:"numeric",month:"numeric",year:"numeric"})+" klo "+d.toLocaleTimeString("fi-FI",{hour:"2-digit",minute:"2-digit"});
+}
+function applyData(data, fromCache){
+  events = Array.isArray(data.events) ? data.events : [];
+  generatedAt = data.generatedAt || null;
+  const when = fmtWhen(generatedAt);
+  if(fromCache) setStatus("stale", "Näytetään tallennettu versio" + (when?` (päivitetty ${when})`:"") + " — ei verkkoyhteyttä tietoihin.");
+  else setStatus("ok", "Ajan tasalla" + (when?` · päivitetty ${when}`:"") );
+  render();
+}
+async function loadEvents(){
+  setStatus("ok","Ladataan…");
+  try {
+    const res = await fetch(DATA_URL + "?t=" + Date.now(), { cache: "no-store" });
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    const data = await res.json();
+    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+    applyData(data, false);
+  } catch(err) {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if(cached){ try { applyData(JSON.parse(cached), true); return; } catch(e){} }
+    setStatus("err","Tapahtumia ei voitu ladata. Tarkista verkkoyhteys tai tapahtumat.json.");
+    events=[]; render();
+  }
+}
+function render(){
+  const tl=document.getElementById("timeline"); tl.innerHTML="";
+  const today=todayStr();
+  let list=events.slice().sort((a,b)=>(a.date||"").localeCompare(b.date||""));
+  if(filter==="tulevat") list=list.filter(e=>(e.endDate||e.date)>=today);
+  else if(filter==="vahvistettu") list=list.filter(e=>e.status==="vahvistettu");
+  else if(filter==="arvio") list=list.filter(e=>e.status==="arvio");
+  if(!list.length){ tl.innerHTML='<div class="empty">Ei tapahtumia tässä näkymässä.</div>'; return; }
+  let lastKey="";
+  for(const ev of list){
+    const d=parseDate(ev.date); const key=d?`${d.getFullYear()}-${d.getMonth()}`:"";
+    if(key!==lastKey && d){ const l=document.createElement("div"); l.className="month-label"; l.textContent=`${MONTHS_CAP[d.getMonth()]} ${d.getFullYear()}`; tl.appendChild(l); lastKey=key; }
+    const isPast=(ev.endDate||ev.date)<today;
+    const card=document.createElement("div"); card.className="event"+(isPast?" past":"");
+    card.innerHTML=`<div class="ev-top"><div><div class="ev-date">${fmtRange(ev)}</div><div class="ev-title"></div><div class="ev-meta"></div></div><span class="badge ${ev.status}">${statusLabel(ev.status)}</span></div><div class="ev-desc"></div><div class="ev-links"><div class="ev-actions"><button class="edit" data-edit="${ev.id}">Muokkaa</button><button data-del="${ev.id}">Poista</button></div></div>`;
+    card.querySelector(".ev-title").textContent=ev.title||"";
+    card.querySelector(".ev-meta").textContent=ev.location||"";
+    card.querySelector(".ev-desc").textContent=ev.desc||"";
+    if(ev.source){ const a=document.createElement("a"); a.href=ev.source; a.target="_blank"; a.rel="noopener"; a.textContent="Lähde ↗"; card.querySelector(".ev-links").insertBefore(a, card.querySelector(".ev-actions")); }
+    tl.appendChild(card);
+  }
+}
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click",()=>{ document.querySelectorAll(".chip").forEach(c=>c.classList.remove("active")); chip.classList.add("active"); filter=chip.dataset.filter; localStorage.setItem(FILTER_KEY,filter); render(); });
+});
+document.querySelectorAll(".chip").forEach(c=>{ c.classList.toggle("active", c.dataset.filter===filter); });
+document.getElementById("reloadBtn").addEventListener("click", loadEvents);
+
+/* ---------- Modal: tuottaa komennon agentille, ei kirjoita paikallisesti ---------- */
+const overlay=document.getElementById("overlay");
+function openAddModal(){
+  document.getElementById("modalTitle").textContent="Lisää tapahtuma";
+  document.getElementById("modalHint").textContent="Tämä ei kirjoita suoraan kalenteriin. Täytä tiedot ja kopioi valmis komento agentille — agentti lisää tapahtuman Google-kalenteriin, ja se ilmestyy tähän aikajanaan seuraavassa päivityksessä.";
+  ["f-title","f-date","f-enddate","f-location","f-desc","f-source"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f-status").value="vahvistettu";
+  overlay.classList.add("open");
+}
+function closeModal(){ overlay.classList.remove("open"); }
+document.getElementById("addBtn").addEventListener("click", openAddModal);
+document.getElementById("cancelBtn").addEventListener("click", closeModal);
+overlay.addEventListener("click",(e)=>{ if(e.target===overlay) closeModal(); });
+document.getElementById("saveBtn").addEventListener("click",()=>{
+  const title=document.getElementById("f-title").value.trim();
+  const date=document.getElementById("f-date").value;
+  if(!title||!date){ alert("Otsikko ja alkupäivä ovat pakollisia."); return; }
+  const endDate=document.getElementById("f-enddate").value;
+  const location=document.getElementById("f-location").value.trim();
+  const status=document.getElementById("f-status").value;
+  const desc=document.getElementById("f-desc").value.trim();
+  const source=document.getElementById("f-source").value.trim();
+  const cmd =
+    "Lisää tämä tapahtuma admindigiopo-kalenteriin koko päivän merkintänä (muistutus viikko + 1 vrk ennen). "+
+    "Koodaa kuvauksen loppuun rivit \"Tila: "+status+"\" ja "+(source?("\"Lähde: "+source+"\""):"(ei lähdettä)")+", jotta paneeli osaa lukea ne.\n\n"+
+    "- Otsikko: "+title+"\n"+
+    "- Alkupäivä: "+date+"\n"+
+    "- Loppupäivä: "+(endDate||"(sama päivä)")+"\n"+
+    "- Paikka: "+(location||"-")+"\n"+
+    "- Kuvaus: "+(desc||"-")+"\n\n"+
+    "Päivitä sen jälkeen tapahtumat.json, jotta tapahtuma näkyy paneelissa.";
+  copyText(cmd, document.getElementById("saveBtn"));
+  setTimeout(closeModal, 1200);
+});
+document.getElementById("timeline").addEventListener("click",(e)=>{
+  const del=e.target.closest("[data-del]"), edit=e.target.closest("[data-edit]");
+  if(del){
+    const ev=events.find(x=>x.id===del.dataset.del); if(!ev) return;
+    copyText("Poista admindigiopo-kalenterista tapahtuma \""+ev.title+"\" ("+ev.date+"). Päivitä sen jälkeen tapahtumat.json.", null);
+    alert("Poistokomento kopioitu leikepöydälle. Liitä se agentille — poisto tehdään kalenterissa, ja aikajana päivittyy sen mukana.");
+  } else if(edit){
+    const ev=events.find(x=>x.id===edit.dataset.edit); if(!ev) return;
+    copyText("Muokkaa admindigiopo-kalenterin tapahtumaa \""+ev.title+"\" ("+ev.date+"): [KIRJOITA MUUTOKSET]. Päivitä sen jälkeen tapahtumat.json.", null);
+    alert("Muokkauskomennon pohja kopioitu leikepöydälle. Täydennä muutokset ja liitä agentille — muokkaus tehdään kalenterissa.");
+  }
+});
+
+/* init */
+renderCmds(); renderSrc(); loadEvents();
+</script>
+</body>
+</html>
