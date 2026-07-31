@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-01T01:28:10+03:00",
+  "generatedAt": "2026-08-01T01:31:01+03:00",
   "source": "Google-kalenteri (admindigiopo). Tämän tiedoston tuottaa ohjausagentti automaattisesti — älä muokkaa käsin.",
   "events": [
     {
@@ -11,26 +11,6 @@
       "desc": "Suomen suurin opiskelu- ja uratapahtuma. Ohjelmaa myös opoille.",
       "status": "vahvistettu",
       "source": "https://www.sttinfo.fi/tiedote/71625630/lehdistokutsu-tervetuloa-suomen-suurimpaan-opiskelu-ja-uratapahtumaan-studiaan?lang=fi"
-    },
-    {
-      "id": "kk3lgtnl8snfl3imfdeag45qb8",
-      "title": "Studia-messut 2026",
-      "date": "2026-11-25",
-      "endDate": "2026-11-26",
-      "location": "",
-      "desc": "Suomen suurin opiskelu- ja uratapahtuma. Omaa ohjelmaa myös opoille ja ohjaajille.\n\n(Lisätty Cowork-ohjausagentilla)",
-      "status": "vahvistettu",
-      "source": "https://www.sttinfo.fi/tiedote/71625630/lehdistokutsu-tervetuloa-suomen-suurimpaan-opiskelu-ja-uratapahtumaan-studiaan?lang=fi"
-    },
-    {
-      "id": "t7sbmtrbrdmmhhifl9n3dc2v4k",
-      "title": "ARVIO: Perusopetuksen jälkeinen yhteishaku alkaa (vahvista OPH:lta)",
-      "date": "2027-02-16",
-      "endDate": "",
-      "location": "",
-      "desc": "HUOM: Päivämäärä on ARVIO. Tarkkaa 2027-aikaa ei ole vielä julkaistu. Arvio perustuu vuoteen 2026, jolloin haku oli 17.2.–17.3. Hakuaika kestää n. kuukauden. Tärkein 9. luokan ohjauspäivämäärä — päivitä kun OPH julkaisee tarkat päivät.\n\n(Lisätty Cowork-ohjausagentilla)",
-      "status": "arvio",
-      "source": "https://opintopolku.fi/konfo/fi/sivu/tarkeita-paivamaaria-perusopetuksen-jalkeisen-koulutuksen-yhteishaussa"
     },
     {
       "id": "22toofbua9lk74k2p5rdg8m6mk",
@@ -51,16 +31,6 @@
       "desc": "Järjestäjänä Pohjois-Pohjanmaan ja Kainuun opinto-ohjaajat. Tarkka ajankohta valmistelussa — päivä alustava.",
       "status": "seurataan",
       "source": "https://oulunlaaninopot.wordpress.com/"
-    },
-    {
-      "id": "aprgi6417i97snl5iiqmeoqi5c",
-      "title": "Skills Games / Taitaja 2027",
-      "date": "2027-05-10",
-      "endDate": "2027-05-13",
-      "location": "",
-      "desc": "Nuorten ammattitaidon SM + Abilympics, yli 80 lajia. Hyvä TET- ja ammatinvalintatapahtuma.\n\n(Lisätty Cowork-ohjausagentilla)",
-      "status": "vahvistettu",
-      "source": "https://www.skillsfinland.fi/skills-games"
     },
     {
       "id": "l6kcdn7ka671ku8n2fbku36p3c",
