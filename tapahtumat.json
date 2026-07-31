@@ -1,9 +1,9 @@
 {
-  "generatedAt": "2026-07-31T00:00:00+03:00",
+  "generatedAt": "2026-08-01T06:00:00+03:00",
   "source": "Google-kalenteri (admindigiopo). Tämän tiedoston tuottaa ohjausagentti automaattisesti — älä muokkaa käsin.",
   "events": [
     {
-      "id": "s-studia",
+      "id": "avg9plv61ddgt82cqr70usr7ac",
       "title": "Studia-messut 2026",
       "date": "2026-11-25",
       "endDate": "2026-11-26",
@@ -13,7 +13,7 @@
       "source": "https://www.sttinfo.fi/tiedote/71625630/lehdistokutsu-tervetuloa-suomen-suurimpaan-opiskelu-ja-uratapahtumaan-studiaan?lang=fi"
     },
     {
-      "id": "s-yh",
+      "id": "22toofbua9lk74k2p5rdg8m6mk",
       "title": "Perusopetuksen jälkeinen yhteishaku (kevät)",
       "date": "2027-02-16",
       "endDate": "2027-03-16",
@@ -23,7 +23,7 @@
       "source": "https://opintopolku.fi/konfo/fi/sivu/tarkeita-paivamaaria-perusopetuksen-jalkeisen-koulutuksen-yhteishaussa"
     },
     {
-      "id": "s-opo",
+      "id": "ftuf87vgbp65at3orem5k2rdtc",
       "title": "Opopäivät 2027 (Oulu)",
       "date": "2027-04-01",
       "endDate": "",
@@ -33,7 +33,7 @@
       "source": "https://oulunlaaninopot.wordpress.com/"
     },
     {
-      "id": "s-taitaja",
+      "id": "l6kcdn7ka671ku8n2fbku36p3c",
       "title": "Skills Games / Taitaja 2027",
       "date": "2027-05-10",
       "endDate": "2027-05-13",
