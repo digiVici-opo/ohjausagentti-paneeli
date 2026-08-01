@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-01T11:34:05+03:00",
+  "generatedAt": "2026-08-01T11:34:24+03:00",
   "source": "Google-kalenteri (admindigiopo). Tämän tiedoston tuottaa ohjausagentti automaattisesti — älä muokkaa käsin.",
   "events": [
     {
@@ -8,8 +8,8 @@
       "date": "2026-11-25",
       "endDate": "2026-11-26",
       "location": "Helsinki, Messukeskus",
-      "status": "vahvistettu",
       "desc": "Suomen suurin opiskelu- ja uratapahtuma. Ohjelmaa myös opoille.",
+      "status": "vahvistettu",
       "source": "https://www.sttinfo.fi/tiedote/71625630/lehdistokutsu-tervetuloa-suomen-suurimpaan-opiskelu-ja-uratapahtumaan-studiaan?lang=fi"
     },
     {
@@ -18,8 +18,8 @@
       "date": "2027-02-16",
       "endDate": "2027-03-16",
       "location": "Opintopolku.fi",
-      "status": "arvio",
       "desc": "Tarkkaa 2027-aikaa ei ole vielä julkaistu. Arvio perustuu vuoteen 2026 (17.2.-17.3.). Tärkein 9. lk:n ohjauspäivämäärä.",
+      "status": "arvio",
       "source": "https://opintopolku.fi/konfo/fi/sivu/tarkeita-paivamaaria-perusopetuksen-jalkeisen-koulutuksen-yhteishaussa"
     },
     {
@@ -28,8 +28,8 @@
       "date": "2027-04-01",
       "endDate": "",
       "location": "Oulu",
-      "status": "seurataan",
       "desc": "Järjestäjänä Pohjois-Pohjanmaan ja Kainuun opinto-ohjaajat. Tarkka ajankohta valmistelussa — päivä alustava.",
+      "status": "seurataan",
       "source": "https://oulunlaaninopot.wordpress.com/"
     },
     {
@@ -38,8 +38,8 @@
       "date": "2027-05-10",
       "endDate": "2027-05-13",
       "location": "Helsinki, Messukeskus",
-      "status": "vahvistettu",
       "desc": "Nuorten ammattitaidon SM + Abilympics, yli 80 lajia. Hyvä TET- ja ammatinvalintatapahtuma.",
+      "status": "vahvistettu",
       "source": "https://www.skillsfinland.fi/skills-games"
     }
   ]
